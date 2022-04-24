@@ -13,3 +13,4 @@ renv.lock
 *.Rhistory
 *.Rproj.user
 *.gitignore
+.Rproj.user
