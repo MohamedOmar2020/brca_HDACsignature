@@ -1,0 +1,26 @@
+{
+    "id": "037B42F7",
+    "path": "~/Documents/Research/Projects/BreastCancer_Tan/code/survival_tcga_byGene.R",
+    "project_path": "code/survival_tcga_byGene.R",
+    "type": "r_source",
+    "hash": "1432240318",
+    "contents": "",
+    "dirty": false,
+    "created": 1650657740418.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "189,24",
+        "scrollLine": "148"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1650814715,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1650814715302,
+    "read_only": false,
+    "read_only_alternatives": []
+}

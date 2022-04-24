@@ -1,0 +1,13 @@
+data/
+figs/
+objs/
+text/
+misc/
+renv/
+
+
+renv.lock
+*.Rprofile
+*.Rproj
+*.DS_store
+
