@@ -10,4 +10,6 @@ renv.lock
 *.Rprofile
 *.Rproj
 *.DS_store
-
+*.Rhistory
+*.Rproj.user
+*.gitignore
