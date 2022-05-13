@@ -193,6 +193,7 @@ compounds_goodGns <- siginfo[sig_id %in% names(mod_idx_goodGns) &
         .(sig_id, pert_id, cmap_name, ss_ngene)][
           order(ss_ngene, decreasing=F)]
 
+write.csv(compounds_goodGns, file = './objs/cmap/compounds_goodGns.csv')
 
 compounds_badGns <- siginfo[sig_id %in% names(mod_idx_badGns) &
                                ss_ngene <= 120 & 
@@ -200,6 +201,7 @@ compounds_badGns <- siginfo[sig_id %in% names(mod_idx_badGns) &
                              .(sig_id, pert_id, cmap_name, ss_ngene)][
                                order(ss_ngene, decreasing=F)]
 
+write.csv(compounds_badGns, file = './objs/cmap/compounds_badGns.csv')
 
 
 

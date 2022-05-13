@@ -205,7 +205,7 @@ ggsurvplot(Fit_sig_metabric,
            pval = TRUE,
            ggtheme = theme_minimal(),
            risk.table.y.text.col = FALSE,
-           risk.table.y.text = FALSE, title = 'ET4 K-TSPs pairs combined (Metabric OS)')
+           risk.table.y.text = FALSE, title = '4-TSPs and METABRIC OS')
 dev.off()
 
 PlotList <- list(plot_IGFBP5_ID3_metabric, plot_GDPD5_S100A6_metabric, plot_CCDC69_IER5_metabric, plot_CUX1_CX3CL1_metabric)
@@ -263,7 +263,7 @@ ggsurvplot(Fit_sig_tcga,
            pval = TRUE,
            ggtheme = theme_minimal(),
            risk.table.y.text.col = FALSE,
-           risk.table.y.text = FALSE, title = 'ET4 K-TSPs pairs combined (TCGA PFS)')
+           risk.table.y.text = FALSE, title = '4-TSPs and TCGA PFS')
 dev.off()
 
 PlotList <- list(plot_IGFBP5_ID3_tcga, plot_GDPD5_S100A6_tcga, plot_CCDC69_IER5_tcga, plot_CUX1_CX3CL1_tcga)

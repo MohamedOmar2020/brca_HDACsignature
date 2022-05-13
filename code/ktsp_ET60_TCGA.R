@@ -131,3 +131,88 @@ confusion_metabric
 
 MCC_metabric <- mltools::mcc(pred = prediction_metabric, actuals = group_metabric)
 MCC_metabric
+
+############################################################
+## Keep only the relevant information (Metastasis Event and Time)
+Phenotype_metabric <- cbind(Pheno_metabric[, c("Overall.Survival.Status", "Overall.Survival..Months.")], 
+                            ktspStats_metabric$comparisons, prediction_metabric)
+
+Phenotype_tcga <- cbind(Pheno_tcga[, c("Progression.Free.Status", "Progress.Free.Survival..Months.")], 
+                        ktspStats_tcga$comparisons, prediction_tcga)
+
+# create a merged pdata and Z-scores object
+CoxData_metabric <- data.frame(Phenotype_metabric)
+CoxData_tcga <- data.frame(Phenotype_tcga)
+
+########################################################################  
+## Fit survival curves
+
+pairs_list <- as.list(colnames(CoxData_metabric)[3:(ncol(CoxData_metabric)-1)])
+names(pairs_list) <- colnames(CoxData_metabric)[3:(ncol(CoxData_metabric)-1)]
+
+# Metabric: 
+surv_func_metabric <- function(x){
+  f <- as.formula(paste("Surv(Overall.Survival..Months., Overall.Survival.Status) ~", x))
+  return(surv_fit(f, data = CoxData_metabric))
+}
+metabric_fit_list <- lapply(pairs_list, surv_func_metabric)
+fit_sig_metabric <- survfit(Surv(Overall.Survival..Months., Overall.Survival.Status) ~ prediction_metabric, data = CoxData_metabric)
+
+# TCGA: 
+surv_func_tcga <- function(x){
+  f <- as.formula(paste("Surv(Progress.Free.Survival..Months., Progression.Free.Status) ~", x))
+  return(surv_fit(f, data = CoxData_tcga))
+}
+
+tcga_fit_list <- lapply(pairs_list, surv_func_tcga)
+fit_sig_tcga <- survfit(Surv(Progress.Free.Survival..Months., Progression.Free.Status) ~ prediction_tcga, data = CoxData_tcga)
+
+
+##################################################################
+## Plot survival curves
+
+## Metabric:
+# all pairs combined
+pdf("./figs/9TSPs_Allpairs_metabric.pdf", width = 8, height = 8, onefile = F)
+ggsurvplot(fit_sig_metabric,
+           risk.table = FALSE,
+           pval = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table.y.text.col = FALSE,
+           risk.table.y.text = FALSE, title = '9-TSPs and METABRIC OS')
+dev.off()
+
+# individual pairs
+metabric_plot_list <- ggsurvplot_list(metabric_fit_list,
+                                      data = CoxData_metabric,
+                                      title =gsub("\\.", "\\>", names(metabric_fit_list)), 
+                                      pval = TRUE)
+
+
+Splot_metabric <- arrange_ggsurvplots(metabric_plot_list, title = "Metabric OS using the 9 TSPs pairs individually", ncol = 5, nrow = 2)
+ggsave("./figs/9TSPs_indvPairs_Metabric.pdf", Splot_metabric, width = 45, height = 25, units = "cm")
+
+##########
+## TCGA:
+# all pairs combined
+pdf("./figs/9TSPs_Allpairs_tcga.pdf", width = 8, height = 8, onefile = F)
+ggsurvplot(fit_sig_tcga,
+           risk.table = FALSE,
+           pval = TRUE,
+           ggtheme = theme_minimal(),
+           risk.table.y.text.col = FALSE,
+           risk.table.y.text = FALSE, title = '9-TSPs and TCGA PFS')
+dev.off()
+
+# individual pairs
+tcga_plot_list <- ggsurvplot_list(tcga_fit_list,
+                                  data = CoxData_tcga,
+                                  title =gsub("\\.", "\\>", names(tcga_fit_list)), 
+                                  pval = TRUE)
+
+
+Splot_tcga <- arrange_ggsurvplots(tcga_plot_list, title = "TCGA PFS using the 9 TSPs pairs individually", ncol = 5, nrow = 2)
+ggsave("./figs/9TSPs_indvPairs_TCGA.pdf", Splot_tcga, width = 45, height = 25, units = "cm")
+
+
+
