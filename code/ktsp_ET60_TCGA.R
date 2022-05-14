@@ -156,7 +156,13 @@ surv_func_metabric <- function(x){
   return(surv_fit(f, data = CoxData_metabric))
 }
 metabric_fit_list <- lapply(pairs_list, surv_func_metabric)
+
 fit_sig_metabric <- survfit(Surv(Overall.Survival..Months., Overall.Survival.Status) ~ prediction_metabric, data = CoxData_metabric)
+
+# right censoring?
+CoxData_metabric$Overall.Survival..Months.[CoxData_metabric$Overall.Survival..Months. >=120] <-  'NA'
+CoxData_metabric$Overall.Survival..Months. <- as.numeric(CoxData_metabric$Overall.Survival..Months.)
+fit_sig_metabric <- survfit(Surv(time = Overall.Survival..Months., event = Overall.Survival.Status, type = 'right') ~ prediction_metabric, data = CoxData_metabric)
 
 # TCGA: 
 surv_func_tcga <- function(x){
@@ -165,6 +171,10 @@ surv_func_tcga <- function(x){
 }
 
 tcga_fit_list <- lapply(pairs_list, surv_func_tcga)
+
+# right censoring?
+CoxData_tcga$Progress.Free.Survival..Months.[CoxData_tcga$Progress.Free.Survival..Months. >=120] <-  'NA'
+CoxData_tcga$Progress.Free.Survival..Months. <- as.numeric(CoxData_tcga$Progress.Free.Survival..Months.)
 fit_sig_tcga <- survfit(Surv(Progress.Free.Survival..Months., Progression.Free.Status) ~ prediction_tcga, data = CoxData_tcga)
 
 
@@ -173,13 +183,28 @@ fit_sig_tcga <- survfit(Surv(Progress.Free.Survival..Months., Progression.Free.S
 
 ## Metabric:
 # all pairs combined
-pdf("./figs/9TSPs_Allpairs_metabric.pdf", width = 8, height = 8, onefile = F)
+#pdf("./figs/9TSPs_Allpairs_metabric.pdf", width = 8, height = 8, onefile = F)
+
+png("./figs/9TSPs_Allpairs_metabric.png", width = 2000, height = 2000, res = 300)
+theme <- theme_survminer(
+  font.main = c(24, "bold", "darkblue"),
+  font.submain = c(20, "bold.italic", "purple"),
+  font.caption = c(20, "plain", "orange"),
+  font.x = c(20, "bold.italic", "black"),
+  font.y = c(20, "bold.italic", "black"),
+  font.tickslab = c(18, "plain", "black"),
+  font.legend = c(20))
+  
 ggsurvplot(fit_sig_metabric,
            risk.table = FALSE,
            pval = TRUE,
-           ggtheme = theme_minimal(),
+           ggtheme = theme,
            risk.table.y.text.col = FALSE,
-           risk.table.y.text = FALSE, title = '9-TSPs and METABRIC OS')
+           legend.labs = c('low risk', 'high risk'),
+           palette = c('darkcyan', 'red'),
+           pval.size = 12,
+           risk.table.y.text = FALSE, title = 'METABRIC OS')
+           
 dev.off()
 
 # individual pairs
@@ -195,13 +220,17 @@ ggsave("./figs/9TSPs_indvPairs_Metabric.pdf", Splot_metabric, width = 45, height
 ##########
 ## TCGA:
 # all pairs combined
-pdf("./figs/9TSPs_Allpairs_tcga.pdf", width = 8, height = 8, onefile = F)
+#pdf("./figs/9TSPs_Allpairs_tcga.pdf", width = 8, height = 8, onefile = F)
+png("./figs/9TSPs_Allpairs_tcga.png", width = 2000, height = 2000, res = 300)
 ggsurvplot(fit_sig_tcga,
            risk.table = FALSE,
            pval = TRUE,
-           ggtheme = theme_minimal(),
+           ggtheme = theme,
            risk.table.y.text.col = FALSE,
-           risk.table.y.text = FALSE, title = '9-TSPs and TCGA PFS')
+           legend.labs = c('low risk', 'high risk'),
+           palette = c('darkcyan', 'red'),
+           pval.size = 12,
+           risk.table.y.text = FALSE, title = 'TCGA PFS')
 dev.off()
 
 # individual pairs
@@ -213,6 +242,14 @@ tcga_plot_list <- ggsurvplot_list(tcga_fit_list,
 
 Splot_tcga <- arrange_ggsurvplots(tcga_plot_list, title = "TCGA PFS using the 9 TSPs pairs individually", ncol = 5, nrow = 2)
 ggsave("./figs/9TSPs_indvPairs_TCGA.pdf", Splot_tcga, width = 45, height = 25, units = "cm")
+
+############
+# both metabric and tcga survival curves
+
+
+
+
+
 
 
 

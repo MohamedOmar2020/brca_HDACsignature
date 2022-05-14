@@ -193,7 +193,8 @@ par(pty="s")
 for (i in Gns_symbol){
   pheatmap::pheatmap(corr_mod, annotation_row=mod_df[[i]], annotation_col=mod_df[[i]],
                      show_rownames=T, show_colnames=T, main = i,
-                     fontsize_row = 3, fontsize_col = 3,
+                     fontsize_row = 5, fontsize_col = 5,
+                     width = 15, height = 15,
                      filename = paste0('./figs/cmap/ET60Gns_corr/', i, '.png')) 
 }
 
